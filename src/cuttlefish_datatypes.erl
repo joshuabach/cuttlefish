@@ -28,6 +28,7 @@
 
 -type datatype() :: integer |
                     string |
+                    binary |
                     atom |
                     file |
                     directory |
@@ -43,6 +44,7 @@
                     float.
 -type extended() :: { integer, integer() } |
                     { string, string() } |
+                    { binary, binary() } |
                     { file, file:filename() } |
                     { directory, file:filename() } |
                     { atom, atom() } |
@@ -68,6 +70,7 @@
 -spec is_supported(any()) -> boolean().
 is_supported(integer) -> true;
 is_supported(string) -> true;
+is_supported(binary) -> true;
 is_supported(file) -> true;
 is_supported(directory) -> true;
 is_supported(flag) -> true;
@@ -92,6 +95,7 @@ is_supported(_) -> false.
 -spec is_extended(any()) -> boolean().
 is_extended({integer, I}) when is_integer(I) -> true;
 is_extended({string, S}) when is_list(S) -> true;
+is_extended({binary, B}) when is_binary(B) -> true;
 is_extended({atom, A}) when is_atom(A) -> true;
 is_extended({file, F}) when is_list(F) -> true;
 is_extended({directory, D}) when is_list(D) -> true;
@@ -113,6 +117,7 @@ is_extended(_) -> false.
 -spec extended_from(extended()) -> datatype().
 extended_from({integer, _}) -> integer;
 extended_from({string, _}) -> string;
+extended_from({binary, _}) -> binary;
 extended_from({atom, _}) -> atom;
 extended_from({file, _}) -> file;
 extended_from({directory, _}) -> directory;
@@ -160,6 +165,8 @@ to_string(Bytesize, bytesize) when is_list(Bytesize) -> Bytesize;
 to_string(Bytesize, bytesize) when is_integer(Bytesize) -> cuttlefish_bytesize:to_string(Bytesize);
 
 to_string(String, string) when is_list(String) -> String;
+
+to_string(Binary, binary) when is_binary(Binary) -> binary_to_list(Binary);
 
 to_string(File, file) when is_list(File) -> File;
 
@@ -219,6 +226,9 @@ from_string(Bytesize, bytesize) when is_integer(Bytesize) -> Bytesize;
 from_string(Bytesize, bytesize) when is_list(Bytesize) -> cuttlefish_bytesize:parse(Bytesize);
 
 from_string(String, string) when is_list(String) -> String;
+
+from_string(Binary, binary) when is_binary(Binary) -> Binary;
+from_string(Binary, binary) when is_list(Binary) -> list_to_binary(Binary);
 
 from_string(File, file) when is_list(File) -> File;
 
